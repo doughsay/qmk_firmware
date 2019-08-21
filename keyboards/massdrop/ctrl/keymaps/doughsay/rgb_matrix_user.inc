@@ -7,16 +7,15 @@ RGB_MATRIX_EFFECT(doughsplash)
 static bool doughsplash(effect_params_t* params) {
   RGB_MATRIX_USE_LIMITS(led_min, led_max);
 
-  HSV hsv = { 0, rgb_matrix_config.sat, 0 };
+  HSV hsv = { 0, 0, rgb_matrix_config.val };
   uint8_t count = g_last_hit_tracker.count;
   uint8_t start = 0; // multi
-  // uint8_t start = qsub8(g_last_hit_tracker.count, 1); // single
 
   for (uint8_t i = led_min; i < led_max; i++) {
     RGB_MATRIX_TEST_LED_FLAGS();
 
     hsv.h = rgb_matrix_config.hue;
-    hsv.v = rgb_matrix_config.val;
+    hsv.s = rgb_matrix_config.sat;
 
     for (uint8_t j = start; j < count; j++) {
       uint16_t tick = scale16by8(g_last_hit_tracker.tick[j], rgb_matrix_config.speed);
@@ -28,23 +27,14 @@ static bool doughsplash(effect_params_t* params) {
       int16_t dy = g_led_config.point[i].y - g_last_hit_tracker.y[j];
       uint8_t dist = sqrt16(dx * dx + dy * dy);
 
-
-      // effect
       uint16_t effect = tick + dist * 5;
 
       if (effect > 255)
         effect = 255;
       effect = 255 - effect;
 
-      hsv.v = qsub8(hsv.v, effect);
-      // end effect
-
-      // if (i == 79) {
-      //     dprintf("dist: %d, tick: %d, effect: %d\n", dist, tick, effect);
-      // }
+      hsv.s = qsub8(hsv.s, effect);
     }
-
-    hsv.v = scale8(hsv.v, rgb_matrix_config.val);
 
     RGB rgb1 = hsv_to_rgb(hsv);
     hsv.h += rgb_matrix_config.speed;
