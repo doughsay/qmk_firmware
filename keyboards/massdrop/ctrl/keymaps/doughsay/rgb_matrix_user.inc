@@ -7,15 +7,15 @@ RGB_MATRIX_EFFECT(doughsplash)
 static bool doughsplash(effect_params_t* params) {
   RGB_MATRIX_USE_LIMITS(led_min, led_max);
 
-  HSV hsv = { 0, 0, rgb_matrix_config.val };
+  HSV hsv = { 0, 0, rgb_matrix_config.hsv.v };
   uint8_t count = g_last_hit_tracker.count;
   uint8_t start = 0; // multi
 
   for (uint8_t i = led_min; i < led_max; i++) {
     RGB_MATRIX_TEST_LED_FLAGS();
 
-    hsv.h = rgb_matrix_config.hue;
-    hsv.s = rgb_matrix_config.sat;
+    hsv.h = rgb_matrix_config.hsv.h;
+    hsv.s = rgb_matrix_config.hsv.s;
 
     for (uint8_t j = start; j < count; j++) {
       uint16_t tick = scale16by8(g_last_hit_tracker.tick[j], rgb_matrix_config.speed);
